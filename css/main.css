@@ -30,7 +30,7 @@ ul {
 p {
     height: 24px;
     line-height: 24px;
-    margin: 0;!important;
+    margin: 0!important;
 }
 ul li {
     list-style-type: none;
@@ -237,6 +237,7 @@ ul li {
     text-align: center;
     border-radius: 10px;
     min-width: 15px;
+    display: none;
 }
 .listConversation ul li  .conversationInfo {
     display: block;
@@ -379,6 +380,7 @@ ul li {
     box-shadow: 0px 1px 0px #cdcdcd;
     text-align: left;
 }
+.dialog_box .user .msg .msgBody span.RongIMexpression_joy img{height: 20px;}
 .dialog_box .user .msg .msgArrow {
     margin-top: 10px;
 }
@@ -416,11 +418,21 @@ ul li {
 }
 .dialog_box .other_user .msg .msgBody {
     float: none;
-    background-color: #fff;
+    background-color: #fff!important;
     color: #000;
     max-width: 300px;
     margin-left: 5px;
     padding: 12px 19px 12px 10px;
+}
+.dialog_box .other_user .msg .voice{
+    width: 80px;
+    background: url("/WebIMDemo/static/images/voicefrom.png") no-repeat;
+    background-position: 80px 8px;
+}
+.dialog_box .self .msg .voice{
+    width: 80px;
+    background: url("/WebIMDemo/static/images/voiceto.png") no-repeat;
+    background-position: 0 8px;
 }
 .dialog_box .user .msg .msgBody {
     margin-right: 40px;
@@ -761,6 +773,14 @@ ul li {
 .slice{
     clear: both;
 }
+.light_notice_backlayer{top: 0px; left: 0px; width: 100%; height: 100%; position: absolute;
+    opacity: 0.15;
+    z-index: 60000;
+    background-color: rgb(0, 0, 0);
+}
+.frontlayer{position: absolute;
+z-index: 60001;
+-webkit-user-select: none;}
 @media screen and (max-width:960px) {
     /* 会话列表 */
     .container {
@@ -770,6 +790,9 @@ ul li {
     }
     .wrap {
         width: 100%;
+    }
+    .wrap .header{
+        background-color: #22aed8;
     }
     .wrap .left {
         width: 100%;
@@ -823,14 +846,15 @@ ul li {
         height: 20px;
     }
     .phone_dialog_header .logOut {
+        display: none;
         float: left;
     }
     .phone_dialog_header .logOut a {
         width: 23px;
         background: url('../images/icons_phone.png') no-repeat;
+        background-size: 100px 100px;
     }
     .phone_dialog_header .addrBtnBack {
-        display: none;
         float: left;
     }
     .phone_dialog_header .addrBtnBack a {
@@ -843,10 +867,8 @@ ul li {
     .phone_dialog_header .addrBtn a {
         width: 23px;
         background: url('../images/icons_phone.png') no-repeat;
+        background-size: 100px 100px;
         background-position: -28px 0;
-    }
-    .list {
-        margin-top: 40px;
     }
     .listConversation ul li font.user_name {
         font-size: 14px;
@@ -945,9 +967,13 @@ ul li {
     }
     .msg_box .features .expression a {
         background: url('../images/icons_phone.png') no-repeat;
+        background-size: 100px 100px;
         background-position: -61px 0;
         width: 28px;
         height: 50px;
+    }
+    .msg_box .input_box{
+        position: relative;
     }
     .msg_box .input_box .button_box span {
         margin-top: 0px;
@@ -972,6 +998,8 @@ ul li {
     .msg_box .input_box .button_box {
         float: right;
         margin-right: 0px;
+        position: relative;
+        z-index: 3;
     }
     .msg_box .input_box .button_box font {
         display: none;
@@ -996,6 +1024,9 @@ ul li {
     .btnBack{display: inherit;}
 }
 @media screen and (max-width:664px) {
+    body{
+        background-color: #22aed8;
+    }
     /* 登录、注册 */
     .login-wrap {
         width: 100%;

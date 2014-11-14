@@ -5,13 +5,14 @@
         'keyboardHeight': 0,
         'winWidth': 0,
         'winHeight': 0,
-        'statuHeight': 0
+        'statuHeight': 0,
+		'RongIMVoice': false
     };
     conf.pc = {
         'MinWidth': 960,
         'FooterMinHeight': 60,
         'Mt': $(".left").css('margin-top'),
-        'Mb': 20
+        'Mb': 20,
     };
     conf.scroll = {
         'cursorcolor': "#78d0f4",
@@ -19,7 +20,7 @@
         'touchbehavior': true,
         'cursorwidth': "5px",
         'cursorborder': "0",
-        'cursorborderradius': "5px"
+        'cursorborderradius': "5px",
     };
     var lib = {};
     lib.clone = function(obj) {
@@ -49,7 +50,8 @@
 
         var otherHeight = 0;
         if (self.isPCBrowser()) {
-            otherHeight = conf.pc.FooterMinHeight + conf.pc.Mb;  //上下空隙间距
+            otherHeight = conf.pc.FooterMinHeight + conf.pc.Mb + 25;  //上下空隙间距
+            $(".bro_notice").show();
             $(".left").show();
             $(".right_box").show();
         } else {
@@ -87,8 +89,10 @@
     self.setDialogBoxHeight = function() {
         var intBoxHeight = $(".right").height();
         var intMsgBoxHeight = 0;
-        if ($(".msg_box") && $(".msg_box").is(":visible")) {
+        if (self.isPCBrowser()) {
             intMsgBoxHeight = $(".msg_box").outerHeight();
+        } else {
+            intMsgBoxHeight = 44;
         }
         var otherHeight = intMsgBoxHeight + $(".dialog_box_header").outerHeight();
         if ($(".pagetion_list") && $(".pagetion_list").is(":visible") == true) {
@@ -122,6 +126,13 @@
         if ($(".right_box").is(":visible")) {
             $(".right_box").hide();
             $(".left").show();
+            if (!$(".listAddr").is(":visible")) {
+                $(".listConversation").hide();
+                $(".listConversation").show();
+            }else {
+                $(".listAddr").hide();
+                $(".listAddr").show();
+            }
         } else {
             $(".listAddr").hide();
             $(".listConversation").show();
@@ -183,13 +194,7 @@
                 }
             }), false);
         } else {
-            $(window).bind("resize", function() {
-                if ($(".RongIMexpressionWrap").is(":visible")) {
-                    $("#RongIMexpression").trigger('click');
-                };
-                self.setBoxHeight();
-            });
-
+            $(window).bind("resize", self.setBoxHeight);
         }
 
         $(".conversation_msg_num").on('change', self.locateNum);
@@ -199,7 +204,7 @@
             $(".settingView").toggle();
         });
         $(".conversationBtn").click(function(event) {
-            $(".logOut").show();
+            $(".phone_dialog_header>.logOut").show();
             $(".addrBtnBack").hide();
             $(".conversationBtn").addClass('selected');
             $(".addrBtn").removeClass('selected');
@@ -207,7 +212,7 @@
             $(".listConversation").show();
         });
         $(".addrBtn").click(function(event) {
-            $(".logOut").show();
+            $(".phone_dialog_header>.logOut").hide();
             $(".addrBtnBack").show();
             $(".addrBtn").addClass('selected');
             $(".conversationBtn").removeClass('selected');
@@ -225,8 +230,76 @@
             RongIMexpressionObj.slideToggle();
         });
         $(".textarea").bind('focus', self.virtualKeyboardHeight);
+//        $("body").bind('click', function() {$(this).trigger('mouseleave');alert(1111);});
+        $(".list").delegate('li', 'click', function() {
+            if (!self.isPCBrowser()) {
+                $(".left").hide();
+                $(".right_box").show();
+            };
+        });
         $(".dialog_box").bind('DOMNodeInserted', self.autoScroll);
-        $(".conversationBtn").trigger('click');
+        $(".dialog_box").delegate('img', 'click', function(event){
+            var url = $(this).attr('bigUrl');
+            self.showImg({'img': url, 'oncomplete': self.showBigImg});
+        });
+		$(".dialog_box").delegate('.voice', 'click', function(event){
+			if (typeof(conf.RongIMVoice) == 'boolean' && conf.RongIMVoice) {
+				var voice = JSON.parse($(this).attr('msg-type'))
+				voice = voice.content;
+				RongIMClient.voice.play(voice);
+			}
+		});
+        $("body").delegate('.light_notice_backlayer', 'click', function(event) {
+             $('.light_notice_backlayer').remove();
+             $(".frontlayer").remove();
+        });
+        $("body").delegate('.frontlayer', 'click', function(event) {
+             $('.light_notice_backlayer').remove();
+             $(".frontlayer").remove();
+        });
+		$("#mainContent").bind('keypress',function(event){  
+            if(event.ctrlKey && event.keyCode == "13"){
+                $('#send').trigger('click');
+            }
+        }); 
+		
+    };
+    self.showBigImg = function() {
+        var html = '<div class="light_notice_backlayer"></div>';
+        var frontLayer = '<div class="frontlayer"></div>';
+        var winWidth = $(window).width();
+        var winHeight = $(window).height();
+        var style = '';
+        var left = 0;
+        var top = 0;
+        var width = this.width;
+        if (width > winWidth) {
+            width = winWidth;
+        } else {
+            left = (winWidth - width)/2;
+        }
+        if (this.height < winHeight) {
+            top = (winHeight - this.height) / 2;
+        }
+        //style = 'left: ' + left + 'px; top: ' + top + 'px';
+        this.obj.style.width = width + 'px';
+        $("body").append($(html));
+        var Layer = $(frontLayer);
+        //var obj = this.obj.outerHTML;
+        Layer.css('left', left + 'px');
+        Layer.css('top', top + 'px');
+
+        Layer.append(this.obj);
+        $("body").append(Layer);
+    };
+    self.showImg = function(cfg) {
+        var img = new Image();
+        img.src = cfg.img;
+        var callback=cfg.oncomplete;
+        img.onload = function () {
+            callback.call({"width":img.width,"height":img.height,"obj": img},null);
+        }
+
     };
     self.autoScroll = function() {
         var scrollHeight = $('.dialog_box')[0].scrollHeight;
@@ -276,21 +349,20 @@
 
         var newConf = conf.scroll;
         newConf = lib.clone(newConf);
-        var newConf1 = conf.scroll;
-        newConf1 = lib.clone(newConf1);
-        $(".list").niceScroll(conf.scroll);
+        var listAddr = lib.clone(conf.scroll);
+        var newConf1 = lib.clone(conf.scroll);
+        $(".listConversation").niceScroll(conf.scroll);
+        $(".listAddr").niceScroll(listAddr);
         $('.dialog_box').niceScroll(newConf);
         $(".RongIMexpressionWrap").niceScroll(newConf1);
         $(".conversation_msg_num").each(self.locateNum);
         $(".status").each(self.locateMsgStatu);
         self.autoScroll();
+		if (typeof(conf.RongIMVoice) == 'boolean' && !conf.RongIMVoice) {
+			conf.RongIMVoice = RongIMClient.voice.init();
+		}
     };
     win[conf.name] = self;
-    $("#mainContent").focus(function () {
-        if ($(".RongIMexpressionWrap").is(":visible")) {
-            $("#RongIMexpression").trigger('click');
-        }
-    });
 })(window, document, window.jQuery);
 
 
@@ -302,4 +374,12 @@ $().ready(function ($) {
         touchEvent.preventDefault();
     }
     $("body").bind("touchmove", stopScrolling);
+    var docElm = document.documentElement;
+        if (docElm.requestFullscreen) {
+              docElm.requestFullscreen();
+              }
+              if (docElm.fullscreenEnabled){
+                docElem.exitFullscreen();
+                }
+
 });
