@@ -102,7 +102,7 @@ RongIMDemoCtrl.controller("RongC_chaInfo", function ($scope, $http, $rootScope) 
 
         }
     });
-    var namelist = {"184": "房总专用", "group001": "融云群一", "group002": "融云群二", "group003": "融云群三", "rongcloud.net.kefu.service112": "客服"}
+    var namelist = { "group001": "融云群一", "group002": "融云群二", "group003": "融云群三", "kefu114": "客服"}
     //消息监听器
     RongIMClient.getInstance().setOnReceiveMessageListener({
         onReceived: function (data) {
