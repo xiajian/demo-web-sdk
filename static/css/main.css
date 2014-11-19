@@ -90,6 +90,7 @@ ul li {
 }
 .dialog_header .setting a{width: 34px;display: block;}
 .dialog_header .setting a label{
+    cursor: pointer;
     display: block;
     width: 13px;
     height: 40px;
@@ -130,6 +131,8 @@ ul li {
 }
 .settingView span .hover {
     background-color: #2fb0e7;
+    line-height: 48px;
+    cursor: pointer;
 }
 .settingView .volSetting font {
     background-position: -31px -41px;
@@ -153,6 +156,9 @@ ul li {
 .list {
     margin-bottom: 10px;
     overflow-y: auto;
+}
+.list li:hover{
+    background-color:#ccc ;
 }
 .listOperatorContent div {
     width: 137px;
@@ -237,7 +243,6 @@ ul li {
     text-align: center;
     border-radius: 10px;
     min-width: 15px;
-    display: none;
 }
 .listConversation ul li  .conversationInfo {
     display: block;
@@ -380,7 +385,6 @@ ul li {
     box-shadow: 0px 1px 0px #cdcdcd;
     text-align: left;
 }
-.dialog_box .user .msg .msgBody span.RongIMexpression_joy img{height: 20px;}
 .dialog_box .user .msg .msgArrow {
     margin-top: 10px;
 }
@@ -426,12 +430,12 @@ ul li {
 }
 .dialog_box .other_user .msg .voice{
     width: 80px;
-    background: url("/WebIMDemo/static/images/voicefrom.png") no-repeat;
+    background: url("../images/voicefrom.png") no-repeat;
     background-position: 80px 8px;
 }
 .dialog_box .self .msg .voice{
     width: 80px;
-    background: url("/WebIMDemo/static/images/voiceto.png") no-repeat;
+    background: url("../images/voiceto.png") no-repeat;
     background-position: 0 8px;
 }
 .dialog_box .user .msg .msgBody {
@@ -767,8 +771,8 @@ ul li {
     display: none;
 }
 .RongIMexpressionWrap{display: none;height: 150px;
-        background-color: #fff;
-        overflow-y: scroll;}
+    background-color: #fff;
+    overflow-y: scroll;}
 .RongIMexpressionWrap span{width: 40px;height: 40px; margin-left: 15px; margin-top: 10px; display: inline-block;}
 .slice{
     clear: both;
@@ -779,8 +783,8 @@ ul li {
     background-color: rgb(0, 0, 0);
 }
 .frontlayer{position: absolute;
-z-index: 60001;
--webkit-user-select: none;}
+    z-index: 60001;
+    -webkit-user-select: none;}
 @media screen and (max-width:960px) {
     /* 会话列表 */
     .container {
@@ -798,7 +802,7 @@ z-index: 60001;
         width: 100%;
         height: 100%;
         background: none;
-        border-radius: none;
+        border-radius: 0;
         margin-top: 0px;
         max-height: none;
         min-height: inherit;
@@ -806,7 +810,7 @@ z-index: 60001;
     .wrap .right {
         width: 100%;
         height: 100%;
-        border-radius: none;
+        border-radius: 0;
         margin-top: 0px;
         max-height: none;
         min-height: inherit;

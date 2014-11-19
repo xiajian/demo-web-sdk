@@ -4,7 +4,7 @@
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
     <meta name="full-screen" content="yes">
     <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
-    <title>融云客服-web sdk demo</title>
+    <title>融云 Demo -  Web SDK</title>
     <meta name="keywords"
           content="融云,即时通讯,即时通讯云,即时通信云,移动 IM,开源 IM,IM 云服务,即时聊天软件,VOIP,移动客服,在线客服,免费,App 开发者服务，融云 Demo ，Web Demo，即时通讯 Demo"/>
     <meta name="description" content="融云 Web Demo 下载体验！"/>
@@ -14,7 +14,7 @@
     <script src='static/js/jquery.nicescroll.js'></script>
     <script src="static/js/angular.min.js"></script>
     <script src="static/js/controller.js"></script>
-    <script src="static/js/RongIMClient.voice.js"></script>
+    <script src="http://res.websdk.rong.io/RongIMClient.voice.js"></script>
 </head>
 <body class="container">
 <div class="bro_notice" style="z-index:1000;width:100%;position:fixed; background-color: #FCF8E3; color: #000;text-align: center;margin: 0 auto;display: none;">
@@ -46,15 +46,14 @@
                     </span>
         </div>
         <div class="settingView">
-            <span class="volSetting hidden"><a href="javascipt:void(0);">开启声音</a></span>
+            <span class="volSetting"><span class="hover" ng-click="playerHandle($event.target)">关闭声音</span></span>
             <hr>
-            <span id="close" class="logOut"><span ng-click="logout()" href="return;"
-                                               class="hover">退出登录</span></span>
+            <span id="close" class="logOut"><span ng-click="logout()" class="hover">退出登录</span></span>
         </div>
         <div class="listOperatorContent">
             <div class="conversationBtn selected">
                 <a href="javascript:void(0)" title="聊天"><span><font
-                        class="msgNum hidden">0</font></span></a>
+                        ng-class='{"msgNum":true,"hidden":totalunreadcount==0}'>{{totalunreadcount}}</font></span></a>
             </div>
             <div class="cutOffRule" style="width: 2px;"></div>
             <div class="addrBtn">
@@ -64,7 +63,7 @@
         <div class="listConversation list" style="display:none ;">
             <ul id="conversationlist" ng-model="ConversationList">
                 <li ng-click="ConversationClick(item.getConversationType().getValue(),item.getTargetId(),item.getConversationTitle())" ng-repeat="item in ConversationList">
-                    <span class="user_img"><img load-portrait="{{item.getTargetId()}}"/><font ng-class="{'conversation_msg_num':true,'hidden':item.getUnreadMessageCount()==0}">{{item.unread}}</font></span><span
+                    <span class="user_img"><img load-portrait="{{item.getTargetId()}}"/><font ng-class="{'conversation_msg_num':true,'hidden':item.unread==0}">{{item.unread}}</font></span><span
                         class="conversationInfo"><p
                         style="margin-top: 10px"><font class="user_name">{{item.getConversationTitle()}}</font><font
                         class="date" >{{item.lastTime | showTime}}</font></p></span>
@@ -151,4 +150,6 @@
 </body>
 <script src="static/js/RongIMClient.Expression.js"></script>
 <script src="static/js/common.js"></script>
+<video style="width: 0px;height: 0px;display: none;" src="static/images/sms-received.mp3" controls="controls">
+</video>
 </html>

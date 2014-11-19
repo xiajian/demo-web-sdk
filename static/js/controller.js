@@ -3,12 +3,14 @@
  */
 "use strict";
 var RongIMDemo = angular.module("RongIMDemo", ["RongIMDemo.ctrl", "RongIMDemo.directive", "RongIMDemo.filter"], function () {
+
 });
 var RongIMDemoCtrl = angular.module("RongIMDemo.ctrl", []);
 
 RongIMDemoCtrl.controller("RongC_chaInfo", function ($scope, $http, $rootScope) {
     var currentConversationTargetId = 0, conver, _historyMessagesCache = {};//历史消息列表
-
+    $scope.hasSound=true;
+    $scope.totalunreadcount = 0;
     $scope.owner = {id: "", portrait: "static/images/user_img.jpg", name: "张亚涛"};
     var list = location.search.slice(1).split('&');
     if (list.length == 3) {
@@ -25,9 +27,14 @@ RongIMDemoCtrl.controller("RongC_chaInfo", function ($scope, $http, $rootScope) 
     $scope.friendsList = [];
     $rootScope.conversationTitle = "";
 
+    $scope.playerHandle=function(t){
+        $scope.hasSound = !$scope.hasSound;
+        t.innerHTML=$scope.hasSound?"开启声音":"关闭声音";
+    };
     $scope.logout = function () {
         $http({method: "get", url: "/logout?t=" + Date.now()}).success(function (data) {
             if (data.code == 200) {
+                RongIMClient.getInstance().disconnect();
                 location.href = "login.html";
             }
         }).error(function () {
@@ -47,11 +54,18 @@ RongIMDemoCtrl.controller("RongC_chaInfo", function ($scope, $http, $rootScope) 
             return;
         currentConversationTargetId = id;
         $rootScope.conversationTitle = name;
-        conver = RongIMClient.getInstance().createConversation(RongIMClient.ConversationType.setValue(type), id, name);
-        conver.setUnreadMessageCount(0);
+        conver = RongIMClient.getInstance().createConversation(RongIMClient.ConversationType.setValue(type), currentConversationTargetId, name);
         if (!_historyMessagesCache[type + "_" + currentConversationTargetId])
             _historyMessagesCache[type + "_" + currentConversationTargetId] = [];
         $rootScope.historyMessages = _historyMessagesCache[type + "_" + currentConversationTargetId];
+        var tempval = $scope.ConversationList.filter(function (item) {
+            return item.getTargetId() == currentConversationTargetId;
+        })[0];
+        if (tempval) {
+            tempval.unread = 0;
+            $scope.totalunreadcount -= conver.getUnreadMessageCount();
+            conver.setUnreadMessageCount(0);
+        }
     }
 
     $scope.ConversationClick = function (type, targetid, name) {
@@ -75,9 +89,13 @@ RongIMDemoCtrl.controller("RongC_chaInfo", function ($scope, $http, $rootScope) 
                     console.log("失败:" + c.getMessage())
                 }
             });
+        } else {
+            alert("获取token失败,请重新登录");
+            location.href = "login.html";
         }
     }).error(function () {
-        alert("获取token失败")
+        alert("获取token失败");
+        location.href = "login.html";
     });
     $http({method: "get", url: "/friends?t=" + Date.now()}).success(function (data) {
         if (data.code == 200) {
@@ -99,13 +117,16 @@ RongIMDemoCtrl.controller("RongC_chaInfo", function ($scope, $http, $rootScope) 
                 alert(status.getValue().getMessage());
                 location.href = "http://webim.rongcloud.net/WebIMDemo/login.html";
             }
-
         }
     });
-    var namelist = { "group001": "融云群一", "group002": "融云群二", "group003": "融云群三", "kefu114": "客服"}
+    var namelist = {"group001": "融云群一", "group002": "融云群二", "group003": "融云群三", "kefu114": "客服"}
     //消息监听器
+    var video = document.getElementsByTagName("video")[0];
     RongIMClient.getInstance().setOnReceiveMessageListener({
         onReceived: function (data) {
+            if ($scope.hasSound) {
+                video.play();
+            }
             if (currentConversationTargetId != data.getTargetId()) {
                 var person = $scope.friendsList.filter(function (item) {
                     return item.id == data.getTargetId();
@@ -114,10 +135,19 @@ RongIMDemoCtrl.controller("RongC_chaInfo", function ($scope, $http, $rootScope) 
                 if (person) {
                     tempval.setConversationTitle(person.username);
                 } else {
-                    tempval.setConversationTitle(namelist[data.getTargetId()] || ("陌生人id:" + data.getTargetId()));
+                    if (data.getTargetId() in namelist) {
+                        tempval.setConversationTitle(namelist[data.getTargetId()]);
+                    } else {
+                        RongIMClient.getInstance().getUserInfo(data.getTargetId(), {onSuccess: function (x) {
+                            tempval.setConversationTitle(x.getUserName());
+                        }, onError: function () {
+                            tempval.setConversationTitle("陌生人Id：" + data.getTargetId());
+                        }});
+                    }
                 }
                 if (tempval) {
                     tempval.setUnreadMessageCount(tempval.getUnreadMessageCount() + 1);
+                    $scope.totalunreadcount++;
                 }
                 if (!_historyMessagesCache[data.getConversationType().getValue() + "_" + data.getTargetId()])
                     _historyMessagesCache[data.getConversationType().getValue() + "_" + data.getTargetId()] = [data];
@@ -128,7 +158,6 @@ RongIMDemoCtrl.controller("RongC_chaInfo", function ($scope, $http, $rootScope) 
                     $rootScope.historyMessages.push(data);
                 })
             }
-            $scope.ConversationList = RongIMClient.getInstance().getConversationList();
             $rootScope.$apply(function () {
                 initConversationList();
             });
@@ -153,7 +182,7 @@ RongIMDemoCtrl.controller("RongC_chaInfo", function ($scope, $http, $rootScope) 
         }
         var con = $("#mainContent").html().trim().replace(/<(|\/)(br>|div>|img.+?>)/g, function (x) {
             return x.charAt(1) == "/" ? "\n" : "";
-        }).replace(/\<span class="RongIMexpression_[a-z]+?"><\/span>/g, function (x) {
+        }).replace(/\<span class="RongIMexpression_[a-z|_]+?"><\/span>/g, function (x) {
             return RongIMClient.Expression.getTagByEnglishName(x.substring(30, x.length - 9));
         }).replace(/&nbsp;/g, " ");
         if (con == "") {
@@ -207,10 +236,10 @@ RongIMDemoDirective.directive("msgType", function () {
             if ("imageUri" in s) {
                 $($element[0]).html("<img class='imgThumbnail' src='data:image/jpg;base64," + s.content + "' bigUrl='" + s.imageUri + "'/>");
             } else if ("duration" in s) {
-               // RongIMClient.voice
-                $($element[0]).addClass("voice").html("  "+s.duration);
+                // RongIMClient.voice
+                $($element[0]).addClass("voice").html("  " + s.duration);
             } else {
-                $($element[0]).html(symbolreplace(initEmotion(s.content)));
+                $($element[0]).html(initEmotion(symbolreplace(s.content)));
             }
             $element[0].removeAttribute("msg-type");
 

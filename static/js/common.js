@@ -1,4 +1,5 @@
-;(function(win,doc,$,undefined){
+;
+(function (win, doc, $, undefined) {
     var conf = {
         'name': 'RongCloudWebSDK',
         'isPCBrowser': false,
@@ -6,7 +7,7 @@
         'winWidth': 0,
         'winHeight': 0,
         'statuHeight': 0,
-		'RongIMVoice': false
+        'RongIMVoice': false
     };
     conf.pc = {
         'MinWidth': 960,
@@ -23,30 +24,33 @@
         'cursorborderradius': "5px",
     };
     var lib = {};
-    lib.clone = function(obj) {
+    lib.clone = function (obj) {
         var that = this;
-        if(typeof(obj) != 'object') return obj;
-        if(obj == null) return obj;
+        if (typeof(obj) != 'object') return obj;
+        if (obj == null) return obj;
         var newObj = {};
-        for(var i in obj) {
+        for (var i in obj) {
             newObj[i] = that.clone(obj[i]);
         }
         return newObj;
     };
-    lib.delay = function(d){
-        for(var t = Date.now();Date.now() - t <= d;);
+    lib.delay = function (d) {
+        for (var t = Date.now(); Date.now() - t <= d;);
     };
 
     var self = {};
     self.conf = conf;
-    self.isPCBrowser = function() {
+    self.isPCBrowser = function () {
         conf.winWidth = $(window).width();
         return conf.winWidth > conf.pc.MinWidth;
     };
 
-    self.setBoxHeight = function(heigh) {
+    self.setBoxHeight = function (heigh) {
         var winHeight = $(window).height();
-        if (heigh && typeof(heigh) == "number") {winHeight = heigh;};
+        if (heigh && typeof(heigh) == "number") {
+            winHeight = heigh;
+        }
+        ;
 
         var otherHeight = 0;
         if (self.isPCBrowser()) {
@@ -73,7 +77,7 @@
         self.setListHeight();
         self.setDialogBoxHeight();
     };
-    self.setListHeight = function() {
+    self.setListHeight = function () {
         var intListHeight = 0;
         var intHeaderHeight = $(".dialog_header").height();
         var intOperHeight = 0;
@@ -86,7 +90,7 @@
         intListHeight = intBoxHeight - intHeaderHeight - intOperHeight - boxMb;
         $(".list").height(intListHeight);
     };
-    self.setDialogBoxHeight = function() {
+    self.setDialogBoxHeight = function () {
         var intBoxHeight = $(".right").height();
         var intMsgBoxHeight = 0;
         if (self.isPCBrowser()) {
@@ -104,32 +108,32 @@
     /**
      * 定位单条未读消息数
      */
-    self.locateNum = function(index, obj) {
+    self.locateNum = function (index, obj) {
         var padding = 3;
         var intWidth = $(obj).width();
         var val = $(obj).html();
         if (val && val > 0) {
             $(obj).css('display', 'inline-block');
             $(obj).css('padding', padding);
-            $(obj).css('margin-left', -intWidth / 2 -6);
+            $(obj).css('margin-left', -intWidth / 2 - 6);
         } else {
             $(obj).hide();
         }
     };
-    self.locateMsgStatu = function(index, obj) {
+    self.locateMsgStatu = function (index, obj) {
         var prevHeight = $(obj).prev("div").height();
         var marTop = (prevHeight - $(obj).height()) / 2 + 1.5 * $(obj).height();
         $(obj).css("margin-top", -marTop);
     };
 
-    self.back = function() {
+    self.back = function () {
         if ($(".right_box").is(":visible")) {
             $(".right_box").hide();
             $(".left").show();
             if (!$(".listAddr").is(":visible")) {
                 $(".listConversation").hide();
                 $(".listConversation").show();
-            }else {
+            } else {
                 $(".listAddr").hide();
                 $(".listAddr").show();
             }
@@ -140,56 +144,57 @@
             $(".addrBtnBack").hide();
         }
     };
-    self.createOrientationChangeProxy = function(fn){
-        return function() {
+    self.createOrientationChangeProxy = function (fn) {
+        return function () {
             if ($(".RongIMexpressionWrap").is(":visible")) {
                 $("#RongIMexpression").trigger('click');
-            };
+            }
+            ;
             $(".textarea").blur();
             clearTimeout(fn.orientationChangeTimer);
             var args = Array.prototype.slice.call(arguments, 0);
-            fn.orientationChangeTimer = setTimeout(function() {
+            fn.orientationChangeTimer = setTimeout(function () {
                 var ori = window.orientation;
-                if(ori != fn.lastOrientation) {
+                if (ori != fn.lastOrientation) {
                     fn.apply(null, args);
                 }
                 fn.lastOrientation = ori;
             }, 800);
         };
     };
-    self.changeView = function() {
-        setTimeout(function() {
-            var height = 0;
-            $(".textarea").focus();
-            window.scrollTo(0, 0);
-            if (window.orientation==180||window.orientation==0) {
-                height = self.winHeight - conf.statuHeight;
-                //$("body").append('<link href="/static/css/main.css" rel="stylesheet">');
-            } else {
-                height = self.winWidth - conf.statuHeight;
-                //$("body").append('<link href="/static/css/main.css" rel="stylesheet">');
-            }
-            self.setBoxHeight()
-        },
-        500);
+    self.changeView = function () {
+        setTimeout(function () {
+                var height = 0;
+                $(".textarea").focus();
+                window.scrollTo(0, 0);
+                if (window.orientation == 180 || window.orientation == 0) {
+                    height = self.winHeight - conf.statuHeight;
+                    //$("body").append('<link href="/static/css/main.css" rel="stylesheet">');
+                } else {
+                    height = self.winWidth - conf.statuHeight;
+                    //$("body").append('<link href="/static/css/main.css" rel="stylesheet">');
+                }
+                self.setBoxHeight()
+            },
+            500);
     };
-    self.setStatuHeight = function() {
+    self.setStatuHeight = function () {
         var winBodyHeight = $(window).height();
         var height = 0;
-        if (window.orientation==180||window.orientation==0) {
+        if (window.orientation == 180 || window.orientation == 0) {
             height = window.screen.height - winBodyHeight;
         } else {
             height = window.screen.width - winBodyHeight;
         }
         conf.statuHeight = height;
     };
-    self.bind = function() {
+    self.bind = function () {
         self.winHeight = window.screen.height;
         self.winWidth = window.screen.width;
         self.setStatuHeight();
         if ('onorientationchange' in window) {
-            window.addEventListener("orientationchange", self.createOrientationChangeProxy(function(){
-                if(window.orientation == 0 || window.orientation == 180 || window.orientation == 90 || window.orientation == -90) {
+            window.addEventListener("orientationchange", self.createOrientationChangeProxy(function () {
+                if (window.orientation == 0 || window.orientation == 180 || window.orientation == 90 || window.orientation == -90) {
                     self.changeView();
                 }
             }), false);
@@ -200,10 +205,10 @@
         $(".conversation_msg_num").on('change', self.locateNum);
         $(".status").on('change', self.locateMsgStatu);
         $(".btnBack").on('click', self.back);
-        $(".setting").bind('click', function(){
+        $(".setting").bind('click', function () {
             $(".settingView").toggle();
         });
-        $(".conversationBtn").click(function(event) {
+        $(".conversationBtn").click(function (event) {
             $(".phone_dialog_header>.logOut").show();
             $(".addrBtnBack").hide();
             $(".conversationBtn").addClass('selected');
@@ -211,7 +216,7 @@
             $(".list").hide();
             $(".listConversation").show();
         });
-        $(".addrBtn").click(function(event) {
+        $(".addrBtn").click(function (event) {
             $(".phone_dialog_header>.logOut").hide();
             $(".addrBtnBack").show();
             $(".addrBtn").addClass('selected');
@@ -219,7 +224,7 @@
             $(".list").hide();
             $(".listAddr").show();
         });
-        $("#RongIMexpression").bind('click', function() {
+        $("#RongIMexpression").bind('click', function () {
             var RongIMexpressionObj = $(".RongIMexpressionWrap");
             var intExpressHeight = RongIMexpressionObj.innerHeight();
             if (RongIMexpressionObj.is(":visible")) {
@@ -231,40 +236,44 @@
         });
         $(".textarea").bind('focus', self.virtualKeyboardHeight);
 //        $("body").bind('click', function() {$(this).trigger('mouseleave');alert(1111);});
-        $(".list").delegate('li', 'click', function() {
+        $(".list").delegate('li', 'click', function () {
             if (!self.isPCBrowser()) {
                 $(".left").hide();
                 $(".right_box").show();
-            };
+            }
+            ;
         });
         $(".dialog_box").bind('DOMNodeInserted', self.autoScroll);
-        $(".dialog_box").delegate('img', 'click', function(event){
+        $(".dialog_box").delegate('img', 'click', function (event) {
             var url = $(this).attr('bigUrl');
             self.showImg({'img': url, 'oncomplete': self.showBigImg});
         });
-		$(".dialog_box").delegate('.voice', 'click', function(event){
-			if (typeof(conf.RongIMVoice) == 'boolean' && conf.RongIMVoice) {
-				var voice = JSON.parse($(this).attr('msg-type'))
-				voice = voice.content;
-				RongIMClient.voice.play(voice);
-			}
-		});
-        $("body").delegate('.light_notice_backlayer', 'click', function(event) {
-             $('.light_notice_backlayer').remove();
-             $(".frontlayer").remove();
+        $(".dialog_box").delegate('.voice', 'click', function (event) {
+            if (typeof(conf.RongIMVoice) == 'boolean' && conf.RongIMVoice) {
+                var voice = JSON.parse($(this).attr('msg-type'))
+                voice = voice.content;
+                RongIMClient.voice.play(voice);
+            }
         });
-        $("body").delegate('.frontlayer', 'click', function(event) {
-             $('.light_notice_backlayer').remove();
-             $(".frontlayer").remove();
+        $("body").delegate('.light_notice_backlayer', 'click', function (event) {
+            $('.light_notice_backlayer').remove();
+            $(".frontlayer").remove();
         });
-		$("#mainContent").bind('keypress',function(event){  
-            if(event.ctrlKey && event.keyCode == "13"){
+        $("body").delegate('.frontlayer', 'click', function (event) {
+            $('.light_notice_backlayer').remove();
+            $(".frontlayer").remove();
+        });
+        $("#mainContent").bind('keypress', function (event) {
+            if (event.ctrlKey && event.keyCode == "13") {
                 $('#send').trigger('click');
             }
-        }); 
-		
+        }).bind("click", function () {
+            if ($(".RongIMexpressionWrap").is(":visible"))
+                $("#RongIMexpression").trigger('click');
+        });
+
     };
-    self.showBigImg = function() {
+    self.showBigImg = function () {
         var html = '<div class="light_notice_backlayer"></div>';
         var frontLayer = '<div class="frontlayer"></div>';
         var winWidth = $(window).width();
@@ -276,7 +285,7 @@
         if (width > winWidth) {
             width = winWidth;
         } else {
-            left = (winWidth - width)/2;
+            left = (winWidth - width) / 2;
         }
         if (this.height < winHeight) {
             top = (winHeight - this.height) / 2;
@@ -292,20 +301,20 @@
         Layer.append(this.obj);
         $("body").append(Layer);
     };
-    self.showImg = function(cfg) {
+    self.showImg = function (cfg) {
         var img = new Image();
         img.src = cfg.img;
-        var callback=cfg.oncomplete;
+        var callback = cfg.oncomplete;
         img.onload = function () {
-            callback.call({"width":img.width,"height":img.height,"obj": img},null);
+            callback.call({"width": img.width, "height": img.height, "obj": img}, null);
         }
 
     };
-    self.autoScroll = function() {
+    self.autoScroll = function () {
         var scrollHeight = $('.dialog_box')[0].scrollHeight;
         $('.dialog_box').scrollTop(scrollHeight);
     };
-    self.drawExpressionWrap = function() {
+    self.drawExpressionWrap = function () {
         var RongIMexpressionObj = $(".RongIMexpressionWrap");
         if (win.RongIMClient) {
             var arrImgList = RongIMClient.Expression.getAllExpression(60, 0);
@@ -316,14 +325,16 @@
                     var newSpan = $('<span class="RongIMexpression_' + arrImgList[objArr].englishName + '"></span>');
                     newSpan.append(imgObj);
                     RongIMexpressionObj.append(newSpan);
-                };
+                }
+                ;
             }
-            $(".RongIMexpressionWrap>span").bind('click', function(event) {
+            $(".RongIMexpressionWrap>span").bind('click', function (event) {
                 $(".textarea").append($(this).clone());
             });
-        };
+        }
+        ;
     };
-    self.virtualKeyboardHeight = function() {
+    self.virtualKeyboardHeight = function () {
         //var sx = $(window).scrollLeft(), sy = $(window).scrollTop();
         //var naturalHeight = window.innerHeight;
         //window.scrollTo(sx, document.body.scrollHeight);
@@ -332,14 +343,14 @@
         //conf.keyboardHeight = keyboardHeight;
         //return keyboardHeight;
     };
-    self.getWinHeight = function(event) {
+    self.getWinHeight = function (event) {
         if (event && event.type == 'orientationchange') {
             return conf.winWidth;
-        } else{
+        } else {
             return $(window).height();
         }
     }
-    self.init = function() {
+    self.init = function () {
         conf.winWidth = $(window).width();
         conf.winHeight = $(window).height();
         self.setBoxHeight();
@@ -358,9 +369,9 @@
         $(".conversation_msg_num").each(self.locateNum);
         $(".status").each(self.locateMsgStatu);
         self.autoScroll();
-		if (typeof(conf.RongIMVoice) == 'boolean' && !conf.RongIMVoice) {
-			conf.RongIMVoice = RongIMClient.voice.init();
-		}
+        if (typeof(conf.RongIMVoice) == 'boolean' && !conf.RongIMVoice) {
+            conf.RongIMVoice = RongIMClient.voice.init();
+        }
     };
     win[conf.name] = self;
 })(window, document, window.jQuery);
@@ -369,17 +380,19 @@
 $().ready(function ($) {
     if (window.RongCloudWebSDK) {
         RongCloudWebSDK.init();
-    };
-    function stopScrolling( touchEvent ) {
+    }
+    ;
+    function stopScrolling(touchEvent) {
         touchEvent.preventDefault();
     }
+
     $("body").bind("touchmove", stopScrolling);
     var docElm = document.documentElement;
-        if (docElm.requestFullscreen) {
-              docElm.requestFullscreen();
-              }
-              if (docElm.fullscreenEnabled){
-                docElem.exitFullscreen();
-                }
+    if (docElm.requestFullscreen) {
+        docElm.requestFullscreen();
+    }
+    if (docElm.fullscreenEnabled) {
+        docElem.exitFullscreen();
+    }
 
 });
