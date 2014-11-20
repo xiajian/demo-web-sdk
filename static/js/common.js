@@ -378,6 +378,9 @@
 
 
 $().ready(function ($) {
+    $(".user_img img,.owner_image img").error(function () {
+        this.setAttribute("src", "static/images/user.png");
+    });
     if (window.RongCloudWebSDK) {
         RongCloudWebSDK.init();
     }

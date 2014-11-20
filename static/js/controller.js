@@ -4,6 +4,7 @@
 "use strict";
 var RongIMDemo = angular.module("RongIMDemo", ["RongIMDemo.ctrl", "RongIMDemo.directive", "RongIMDemo.filter"], function () {
 
+
 });
 var RongIMDemoCtrl = angular.module("RongIMDemo.ctrl", []);
 
@@ -76,7 +77,7 @@ RongIMDemoCtrl.controller("RongC_chaInfo", function ($scope, $http, $rootScope) 
         getHistory(id, name, type);
     };
 
-    RongIMClient.init("z3v5yqkbv8v30");//e0x9wycfx7flq
+    RongIMClient.init("e0x9wycfx7flq");//z3v5yqkbv8v30
     var token = "";
     $http({method: "get", url: "/token?t=" + Date.now()}).success(function (data) {
         if (data.code == 200) {
@@ -182,7 +183,7 @@ RongIMDemoCtrl.controller("RongC_chaInfo", function ($scope, $http, $rootScope) 
         }
         var con = $("#mainContent").html().trim().replace(/<(|\/)(br>|div>|img.+?>)/g, function (x) {
             return x.charAt(1) == "/" ? "\n" : "";
-        }).replace(/\<span class="RongIMexpression_[a-z|_]+?"><\/span>/g, function (x) {
+        }).replace(/\<span class="RongIMexpression_[\w|_]+?"><\/span>/g, function (x) {
             return RongIMClient.Expression.getTagByEnglishName(x.substring(30, x.length - 9));
         }).replace(/&nbsp;/g, " ");
         if (con == "") {
@@ -214,10 +215,15 @@ RongIMDemoFilter.filter("showTime", function () {
 var RongIMDemoDirective = angular.module("RongIMDemo.directive", []);
 RongIMDemoDirective.directive("msgType", function () {
     function initEmotion(str) {
-        return str.replace(RongIMClient.Expression.ExpressionRegExp, function (x) {
-            var img = RongIMClient.Expression.getExpressionByTag(x);
-            return '<span class="RongIMexpression_' + img.englishName + '"><img src="' + img.img.src + '" alt="' + img.chineseName + ' "></span>';
-        });
+        var emojiList=RongIMClient.Expression.retrievalEmoji(str);
+        for(var i=0;i<emojiList.length;i++){
+            var reg=new RegExp(emojiList[i]["utf-8"],"g");
+            str=str.replace(reg,function(){
+                var img=RongIMClient.Expression.getEmojiByContent(emojiList[i]["utf-16"])
+                return '<span class="RongIMexpression_' + img.englishName + '"><img src="' + img.img.src + '" alt="' + img.chineseName + ' "></span>';
+            });
+        }
+        return str;
     }
 
     function symbolreplace(str) {
@@ -236,13 +242,11 @@ RongIMDemoDirective.directive("msgType", function () {
             if ("imageUri" in s) {
                 $($element[0]).html("<img class='imgThumbnail' src='data:image/jpg;base64," + s.content + "' bigUrl='" + s.imageUri + "'/>");
             } else if ("duration" in s) {
-                // RongIMClient.voice
                 $($element[0]).addClass("voice").html("  " + s.duration);
             } else {
                 $($element[0]).html(initEmotion(symbolreplace(s.content)));
             }
             $element[0].removeAttribute("msg-type");
-
         }
     }
 });
