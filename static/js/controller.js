@@ -77,7 +77,7 @@ RongIMDemoCtrl.controller("RongC_chaInfo", function ($scope, $http, $rootScope) 
         getHistory(id, name, type);
     };
 
-    RongIMClient.init("e0x9wycfx7flq");//z3v5yqkbv8v30
+    RongIMClient.init("z3v5yqkbv8v30");//e0x9wycfx7flq
     var token = "";
     $http({method: "get", url: "/token?t=" + Date.now()}).success(function (data) {
         if (data.code == 200) {
@@ -219,7 +219,7 @@ RongIMDemoDirective.directive("msgType", function () {
         for(var i=0;i<emojiList.length;i++){
             var reg=new RegExp(emojiList[i]["utf-8"],"g");
             str=str.replace(reg,function(){
-                var img=RongIMClient.Expression.getEmojiByContent(emojiList[i]["utf-16"])
+                var img=RongIMClient.Expression.getEmojiByContent(emojiList[i]["utf-16"]);
                 return '<span class="RongIMexpression_' + img.englishName + '"><img src="' + img.img.src + '" alt="' + img.chineseName + ' "></span>';
             });
         }
