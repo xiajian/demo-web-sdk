@@ -218,9 +218,12 @@ RongIMDemoDirective.directive("msgType", function () {
         var emojiList=RongIMClient.Expression.retrievalEmoji(str);
         for(var i=0;i<emojiList.length;i++){
             var reg=new RegExp(emojiList[i]["utf-8"],"g");
-            str=str.replace(reg,function(){
+            str=str.replace(reg,function(x){
                 var img=RongIMClient.Expression.getEmojiByContent(emojiList[i]["utf-16"]);
-                return '<span class="RongIMexpression_' + img.englishName + '"><img src="' + img.img.src + '" alt="' + img.chineseName + ' "></span>';
+				if(img)
+					return '<span class="RongIMexpression_' + img.englishName + '"><img src="' + img.img.src + '" alt="' + img.chineseName + ' "></span>';
+				else
+					return x;
             });
         }
         return str;
