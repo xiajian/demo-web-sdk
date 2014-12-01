@@ -184,7 +184,7 @@ RongIMDemoCtrl.controller("RongC_chaInfo", function ($scope, $http, $rootScope) 
         }
         var con = $("#mainContent").html().trim().replace(/<(|\/)(br>|div>|img.+?>)/g, function (x) {
             return x.charAt(1) == "/" ? "\n" : "";
-        }).replace(/\<span class="RongIMexpression_[\w|_]+?"><\/span>/g, function (x) {
+        }).replace(/\<span class="RongIMexpression_[\S+?|_]+?"><\/span>/g, function (x) {
             return RongIMClient.Expression.getEmojiObjByEnglishNameOrChineseName(x.substring(30, x.length - 9)).tag;
         });
         if (con == "") {
