@@ -10,7 +10,7 @@ var RongIMDemoCtrl = angular.module("RongIMDemo.ctrl", []);
 
 RongIMDemoCtrl.controller("RongC_chaInfo", function ($scope, $http, $rootScope) {
     var currentConversationTargetId = 0, conver, _historyMessagesCache = {};//历史消息列表
-    $scope.hasSound=true;
+    $scope.hasSound = true;
     $scope.totalunreadcount = 0;
     $scope.owner = {id: "", portrait: "static/images/user_img.jpg", name: "张亚涛"};
     var list = location.search.slice(1).split('&');
@@ -28,9 +28,9 @@ RongIMDemoCtrl.controller("RongC_chaInfo", function ($scope, $http, $rootScope) 
     $scope.friendsList = [];
     $rootScope.conversationTitle = "";
 
-    $scope.playerHandle=function(t){
+    $scope.playerHandle = function (t) {
         $scope.hasSound = !$scope.hasSound;
-        t.innerHTML=$scope.hasSound?"开启声音":"关闭声音";
+        t.innerHTML = $scope.hasSound ? "开启声音" : "关闭声音";
     };
     $scope.logout = function () {
         $http({method: "get", url: "/logout?t=" + Date.now()}).success(function (data) {
@@ -122,11 +122,11 @@ RongIMDemoCtrl.controller("RongC_chaInfo", function ($scope, $http, $rootScope) 
     });
     var namelist = {"group001": "融云群一", "group002": "融云群二", "group003": "融云群三", "kefu114": "客服"}
     //消息监听器
-    var video = document.getElementsByTagName("video")[0];
+    var audio = document.getElementsByTagName("audio")[0];
     RongIMClient.getInstance().setOnReceiveMessageListener({
         onReceived: function (data) {
             if ($scope.hasSound) {
-                video.play();
+                audio.play();
             }
             if (currentConversationTargetId != data.getTargetId()) {
                 var person = $scope.friendsList.filter(function (item) {
@@ -173,6 +173,7 @@ RongIMDemoCtrl.controller("RongC_chaInfo", function ($scope, $http, $rootScope) 
         str = str.replace(/&gt;/g, '>');
         str = str.replace(/&quot;/g, '"');
         str = str.replace(/&#039;/g, "'");
+        str = str.replace(/&nbsp;/g, " ");
         return str;
     }
 
@@ -184,18 +185,18 @@ RongIMDemoCtrl.controller("RongC_chaInfo", function ($scope, $http, $rootScope) 
         var con = $("#mainContent").html().trim().replace(/<(|\/)(br>|div>|img.+?>)/g, function (x) {
             return x.charAt(1) == "/" ? "\n" : "";
         }).replace(/\<span class="RongIMexpression_[\w|_]+?"><\/span>/g, function (x) {
-            return RongIMClient.Expression.getTagByEnglishName(x.substring(30, x.length - 9));
-        }).replace(/&nbsp;/g, " ");
+            return RongIMClient.Expression.getEmojiObjByEnglishNameOrChineseName(x.substring(30, x.length - 9)).tag;
+        });
         if (con == "") {
             alert("不允许发送空内容");
             return;
         }
-        var msg = new RongIMClient.txtMessage();
+        var msg = new RongIMClient.TextMessage();
         msg.setContent(strreplace(con));
         var content = new RongIMClient.MessageContent(msg);
         RongIMClient.getInstance().sendMessage(conver.getConversationType(), currentConversationTargetId, content, null, {
             onSuccess: function () {
-                console.log("send successfully")
+                console.log("send successfully");
             }, onError: function (x) {
                 $(".dialog_box div[messageId='" + content.getMessage().getMessageId() + "']").addClass("status_error");
                 console.log(x.getValue(), x.getMessage())
@@ -215,18 +216,9 @@ RongIMDemoFilter.filter("showTime", function () {
 var RongIMDemoDirective = angular.module("RongIMDemo.directive", []);
 RongIMDemoDirective.directive("msgType", function () {
     function initEmotion(str) {
-        var emojiList=RongIMClient.Expression.retrievalEmoji(str);
-        for(var i=0;i<emojiList.length;i++){
-            var reg=new RegExp(emojiList[i]["utf-8"],"g");
-            str=str.replace(reg,function(x){
-                var img=RongIMClient.Expression.getEmojiByContent(emojiList[i]["utf-16"]);
-				if(img)
-					return '<span class="RongIMexpression_' + img.englishName + '"><img src="' + img.img.src + '" alt="' + img.chineseName + ' "></span>';
-				else
-					return x;
-            });
-        }
-        return str;
+        return RongIMClient.Expression.retrievalEmoji(str,function(img){
+           return '<span class="RongIMexpression_' + img.englishName + '"><img src="' + img.img.src + '" alt="' + img.chineseName + ' "></span>';
+        });
     }
 
     function symbolreplace(str) {
