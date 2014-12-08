@@ -9,7 +9,7 @@
           content="融云,即时通讯,即时通讯云,即时通信云,移动 IM,开源 IM,IM 云服务,即时聊天软件,VOIP,移动客服,在线客服,免费,App 开发者服务，融云 Demo ，Web Demo，即时通讯 Demo"/>
     <meta name="description" content="融云 Web Demo 下载体验！"/>
     <link href="static/css/main.css?v=1" rel="stylesheet">
-    <script src="http://res.websdk.rongcloud.cn/RongIMClient-0.9.1.min.js?v=1"></script>
+    <script src="http://res.websdk.rongcloud.cn/RongIMClient-0.9.2.min.js?v=1"></script>
     <script src='http://rongcloud-web.qiniudn.com/js_jquery-1.11.1.min.js?v=1'></script>
     <script src='static/js/jquery.nicescroll.js?v=1'></script>
     <script src="static/js/angular.min.js?v=1"></script>
@@ -25,7 +25,7 @@
     <div class="left" >
         <div class="dialog_header header">
                     <span class="owner_image">
-                        <img ng-src="{{owner.portrait}}"/>
+                        <img ng-src="{{owner.portrait}}" onerror="this.src='static/images/user.png'"/>
                     </span>
                     <span class="owner_name" ng-bind="owner.name">
                     </span>
@@ -63,7 +63,7 @@
         <div class="listConversation list" style="display:none ;">
             <ul id="conversationlist" ng-model="ConversationList">
                 <li ng-click="ConversationClick(item.getConversationType().getValue(),item.getTargetId(),item.getConversationTitle())" ng-repeat="item in ConversationList">
-                    <span class="user_img"><img load-portrait="{{item.getTargetId()}}"/><font ng-class="{'conversation_msg_num':true,'hidden':item.unread==0}">{{item.unread}}</font></span><span
+                    <span class="user_img"><img load-portrait="{{item.getTargetId()}}" onerror="this.src='static/images/user.png'"/><font ng-class="{'conversation_msg_num':true,'hidden':item.unread==0}">{{item.unread}}</font></span><span
                         class="conversationInfo"><p
                         style="margin-top: 10px"><font class="user_name">{{item.getConversationTitle()}}</font><font
                         class="date" >{{item.lastTime | showTime}}</font></p></span>
@@ -96,7 +96,7 @@
             <div class="nameInitials">好友列表</div>
             <ul id="friendsList" ng-model="friendsList">
                 <li ng-click="ConversationClick(4,item.id,item.username)" ng-repeat="item in friendsList">
-                    <span class="user_img"><img ng-src="{{'static/images/user.png'||item.portrait}}"/></span> <span
+                    <span class="user_img"><img ng-src="{{'static/images/user.png'||item.portrait}}" onerror="this.src='static/images/user.png'"/></span> <span
                         class="user_name">{{item.username}}</span>
                 </li>
             </ul>
