@@ -229,10 +229,12 @@
             var intExpressHeight = RongIMexpressionObj.innerHeight();
             if (RongIMexpressionObj.is(":visible")) {
                 $(".dialog_box").height($(".dialog_box").height() + intExpressHeight);
+                RongIMexpressionObj.hide()
             } else {
                 $(".dialog_box").height($(".dialog_box").height() - intExpressHeight);
+                RongIMexpressionObj.show()
             }
-            RongIMexpressionObj.slideToggle();
+           // RongIMexpressionObj.slideToggle();
         });
         $(".textarea").bind('focus', self.virtualKeyboardHeight);
 //        $("body").bind('click', function() {$(this).trigger('mouseleave');alert(1111);});
@@ -329,7 +331,8 @@
                 ;
             }
             $(".RongIMexpressionWrap>span").bind('click', function (event) {
-                $(".textarea").append($(this).clone());
+                $(".textarea")[0].value+="["+$(this).children("img").attr("alt")+"]";
+//                $(".textarea").append($(this).clone());
             });
         }
         ;
@@ -379,6 +382,7 @@
 
 $().ready(function ($) {
     $(document).delegate(".user_img img,.owner_image img","error",function () {
+        console.log(1111);
         this.setAttribute("src", "static/images/user.png");
     });
     if (window.RongCloudWebSDK) {

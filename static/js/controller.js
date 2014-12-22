@@ -4,7 +4,6 @@
 "use strict";
 var RongIMDemo = angular.module("RongIMDemo", ["RongIMDemo.ctrl", "RongIMDemo.directive", "RongIMDemo.filter"], function () {
 
-
 });
 var RongIMDemoCtrl = angular.module("RongIMDemo.ctrl", []);
 
@@ -66,6 +65,9 @@ RongIMDemoCtrl.controller("RongC_chaInfo", function ($scope, $http, $rootScope) 
             tempval.unread = 0;
             $scope.totalunreadcount -= conver.getUnreadMessageCount();
             conver.setUnreadMessageCount(0);
+            if ($scope.totalunreadcount <= 0) {
+                document.title = "融云 Demo - Web SDK";
+            }
         }
     }
 
@@ -77,7 +79,7 @@ RongIMDemoCtrl.controller("RongC_chaInfo", function ($scope, $http, $rootScope) 
         getHistory(id, name, type);
     };
 
-    RongIMClient.init("z3v5yqkbv8v30");//e0x9wycfx7flq
+    RongIMClient.init("z3v5yqkbv8v30");//e0x9wycfx7flq z3v5yqkbv8v30
     var token = "";
     $http({method: "get", url: "/token?t=" + Date.now()}).success(function (data) {
         if (data.code == 200) {
@@ -115,7 +117,6 @@ RongIMDemoCtrl.controller("RongC_chaInfo", function ($scope, $http, $rootScope) 
                     initConversationList();
                 });
             } else if (status.getValue() == 4) {
-                alert(status.getValue().getMessage());
                 location.href = "http://webim.rongcloud.net/WebIMDemo/login.html";
             }
         }
@@ -128,6 +129,8 @@ RongIMDemoCtrl.controller("RongC_chaInfo", function ($scope, $http, $rootScope) 
             if ($scope.hasSound) {
                 audio.play();
             }
+            if (document.title != "[新消息]融云 Demo - Web SDK")
+                document.title = "[新消息]融云 Demo - Web SDK";
             if (currentConversationTargetId != data.getTargetId()) {
                 var person = $scope.friendsList.filter(function (item) {
                     return item.id == data.getTargetId();
@@ -182,10 +185,8 @@ RongIMDemoCtrl.controller("RongC_chaInfo", function ($scope, $http, $rootScope) 
             alert("请选中需要聊天的人");
             return;
         }
-        var con = $("#mainContent").html().trim().replace(/<(|\/)(br>|div>|img.+?>)/g, function (x) {
-            return x.charAt(1) == "/" ? "\n" : "";
-        }).replace(/\<span class="RongIMexpression_[\S+?|_]+?"><\/span>/g, function (x) {
-            return RongIMClient.Expression.getEmojiObjByEnglishNameOrChineseName(x.substring(30, x.length - 9)).tag;
+        var con = $("#mainContent").val().replace(/\[.+?\]/g, function (x) {
+            return RongIMClient.Expression.getEmojiObjByEnglishNameOrChineseName(x.slice(1, x.length - 1)).tag || x;
         });
         if (con == "") {
             alert("不允许发送空内容");
@@ -204,7 +205,7 @@ RongIMDemoCtrl.controller("RongC_chaInfo", function ($scope, $http, $rootScope) 
         });
         $rootScope.historyMessages.push(content.getMessage());
         initConversationList();
-        $("#mainContent").html("");
+        $("#mainContent").val("");
     };
 });
 var RongIMDemoFilter = angular.module("RongIMDemo.filter", []);
@@ -216,8 +217,8 @@ RongIMDemoFilter.filter("showTime", function () {
 var RongIMDemoDirective = angular.module("RongIMDemo.directive", []);
 RongIMDemoDirective.directive("msgType", function () {
     function initEmotion(str) {
-        return RongIMClient.Expression.retrievalEmoji(str,function(img){
-           return '<span class="RongIMexpression_' + img.englishName + '"><img src="' + img.img.src + '" alt="' + img.chineseName + ' "></span>';
+        return RongIMClient.Expression.retrievalEmoji(str, function (img) {
+            return '<span class="RongIMexpression_' + img.englishName + '"><img src="' + img.img.src + '" alt="' + img.chineseName + ' "></span>';
         });
     }
 
@@ -247,19 +248,25 @@ RongIMDemoDirective.directive("msgType", function () {
 });
 
 RongIMDemoDirective.directive("loadPortrait", function () {
+    var pa = ["group001", "group002", "group003", "kefu114"];
     return {
         link: function ($scope, $element, $attr) {
             var s = $attr.loadPortrait.split("@"), val = $scope.friendsList.filter(function (item) {
                 return item.id == s[0];
             })[0];
-            if (!val)
+            if (!val) {
+                if (pa.indexOf(s[0]) > -1) {
+                    $element[0].setAttribute("src", 'static/images/personPhoto.png');
+                    return;
+                }
                 RongIMClient.getInstance().getUserInfo(s[0], {
                     onSuccess: function (x) {
                         $element[0].setAttribute("src", x.getPortraituri());
                     }, onError: function () {
-                        $element[0].setAttribute("src", 'static/images/user.png');
+                        $element[0].setAttribute("src", 'static/images/personPhoto.png');
                     }
                 });
+            }
             else {
                 if (s[1] == 1)
                     $element[0].setAttribute("src", $scope.owner.portrait);
