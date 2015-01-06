@@ -1,5 +1,5 @@
 /**
- * Created by yataozhang on 14/11/9.
+ * Created by yataozhang on 14/12/25.
  */
 "use strict";
 var RongIMDemo = angular.module("RongIMDemo", ["RongIMDemo.ctrl", "RongIMDemo.directive", "RongIMDemo.filter"], function () {
@@ -129,9 +129,9 @@ RongIMDemoCtrl.controller("RongC_chaInfo", function ($scope, $http, $rootScope) 
             if ($scope.hasSound) {
                 audio.play();
             }
-            if (document.title != "[新消息]融云 Demo - Web SDK")
-                document.title = "[新消息]融云 Demo - Web SDK";
             if (currentConversationTargetId != data.getTargetId()) {
+                if (document.title != "[新消息]融云 Demo - Web SDK")
+                    document.title = "[新消息]融云 Demo - Web SDK";
                 var person = $scope.friendsList.filter(function (item) {
                     return item.id == data.getTargetId();
                 })[0];
@@ -217,8 +217,12 @@ RongIMDemoFilter.filter("showTime", function () {
 var RongIMDemoDirective = angular.module("RongIMDemo.directive", []);
 RongIMDemoDirective.directive("msgType", function () {
     function initEmotion(str) {
+        var a=document.createElement("span")
         return RongIMClient.Expression.retrievalEmoji(str, function (img) {
-            return '<span class="RongIMexpression_' + img.englishName + '"><img src="' + img.img.src + '" alt="' + img.chineseName + ' "></span>';
+            a.appendChild(img.img);
+            var str='<span class="RongIMexpression_' + img.englishName + '">'+ a.innerHTML+'</span>';
+            a.innerHTML="";
+            return str;
         });
     }
 
