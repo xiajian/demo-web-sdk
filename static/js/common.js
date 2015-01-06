@@ -310,7 +310,6 @@
         img.onload = function () {
             callback.call({"width": img.width, "height": img.height, "obj": img}, null);
         }
-
     };
     self.autoScroll = function () {
         var scrollHeight = $('.dialog_box')[0].scrollHeight;
@@ -323,15 +322,16 @@
             if (arrImgList && arrImgList.length > 0) {
                 for (var objArr in arrImgList) {
                     var imgObj = arrImgList[objArr].img;
-                    imgObj.alt = arrImgList[objArr].chineseName;
+                    imgObj.setAttribute("alt", arrImgList[objArr].chineseName);
+                    imgObj.setAttribute("title", arrImgList[objArr].chineseName);
+//                    imgObj.alt = arrImgList[objArr].chineseName;
                     var newSpan = $('<span class="RongIMexpression_' + arrImgList[objArr].englishName + '"></span>');
                     newSpan.append(imgObj);
                     RongIMexpressionObj.append(newSpan);
                 }
-                ;
             }
             $(".RongIMexpressionWrap>span").bind('click', function (event) {
-                $(".textarea")[0].value+="["+$(this).children("img").attr("alt")+"]";
+                $(".textarea")[0].value+="["+$(this).children(".RC_Expression").attr("alt")+"]";
 //                $(".textarea").append($(this).clone());
             });
         }
