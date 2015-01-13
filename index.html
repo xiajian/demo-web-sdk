@@ -10,6 +10,7 @@
     <meta name="description" content="融云 Web Demo 下载体验！"/>
     <link href="static/css/main.css?v=2" rel="stylesheet">
     <script src="http://res.websdk.rong.io/RongIMClient.min.js"></script>
+    <!--<script src="http://res.websdk.rongcloud.net/RONG.js"></script>-->
     <script src='static/js/jquery-1.8.2.min.js'></script>
     <script src='static/js/jquery.nicescroll.js?v=2'></script>
     <script src="static/js/angular.min.js?v=2"></script>
@@ -116,7 +117,7 @@
                         <div class="msgArrow"><img ng-src="{{item.getMessageDirection().getValue() == 0?'static/images/white_arrow.png':'static/images/blue_arrow.png'}}">
                         </div>
                         <span></span>
-                        <div class="msgBody" msg-type="{{item.getDetails(true)}}">
+                        <div class="msgBody" msg-type="{{item.getDetail()}}">
                         </div>
                     </div>
                     <div messageId="{{item.getMessageId()}}" ng-class="{'status':true, 'status_error':false}"></div>

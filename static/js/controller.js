@@ -33,10 +33,9 @@ RongIMDemoCtrl.controller("RongC_chaInfo", function ($scope, $http, $rootScope) 
     };
     $scope.logout = function () {
         $http({method: "get", url: "/logout?t=" + Date.now()}).success(function (data) {
-            if (data.code == 200) {
+            if (RongIMClient.getInstance)
                 RongIMClient.getInstance().disconnect();
-                location.href = "login.html";
-            }
+            location.href = "login.html";
         }).error(function () {
 
         });
@@ -63,8 +62,9 @@ RongIMDemoCtrl.controller("RongC_chaInfo", function ($scope, $http, $rootScope) 
         })[0];
         if (tempval) {
             tempval.unread = 0;
-            $scope.totalunreadcount -= conver.getUnreadMessageCount();
-            conver.setUnreadMessageCount(0);
+            RongIMClient.getInstance().clearMessagesUnreadStatus(RongIMClient.ConversationType.setValue(type), currentConversationTargetId);
+            $scope.totalunreadcount = RongIMClient.getInstance().getTotalUnreadCount();
+            //conver.setUnreadMessageCount(0);
             if ($scope.totalunreadcount <= 0) {
                 document.title = "融云 Demo - Web SDK";
             }
@@ -129,6 +129,8 @@ RongIMDemoCtrl.controller("RongC_chaInfo", function ($scope, $http, $rootScope) 
             if ($scope.hasSound) {
                 audio.play();
             }
+            $scope.totalunreadcount = RongIMClient.getInstance().getTotalUnreadCount();
+
             if (currentConversationTargetId != data.getTargetId()) {
                 if (document.title != "[新消息]融云 Demo - Web SDK")
                     document.title = "[新消息]融云 Demo - Web SDK";
@@ -148,10 +150,6 @@ RongIMDemoCtrl.controller("RongC_chaInfo", function ($scope, $http, $rootScope) 
                             tempval.setConversationTitle("陌生人Id：" + data.getTargetId());
                         }});
                     }
-                }
-                if (tempval) {
-                    tempval.setUnreadMessageCount(tempval.getUnreadMessageCount() + 1);
-                    $scope.totalunreadcount++;
                 }
                 if (!_historyMessagesCache[data.getConversationType().getValue() + "_" + data.getTargetId()])
                     _historyMessagesCache[data.getConversationType().getValue() + "_" + data.getTargetId()] = [data];
@@ -217,11 +215,11 @@ RongIMDemoFilter.filter("showTime", function () {
 var RongIMDemoDirective = angular.module("RongIMDemo.directive", []);
 RongIMDemoDirective.directive("msgType", function () {
     function initEmotion(str) {
-        var a=document.createElement("span")
+        var a = document.createElement("span")
         return RongIMClient.Expression.retrievalEmoji(str, function (img) {
             a.appendChild(img.img);
-            var str='<span class="RongIMexpression_' + img.englishName + '">'+ a.innerHTML+'</span>';
-            a.innerHTML="";
+            var str = '<span class="RongIMexpression_' + img.englishName + '">' + a.innerHTML + '</span>';
+            a.innerHTML = "";
             return str;
         });
     }
@@ -237,12 +235,14 @@ RongIMDemoDirective.directive("msgType", function () {
     };
     return {
         link: function ($scope, $element, $attr, ngModel) {
-            var s = RongIMClient.getInstance().getIO().util.JSONParse($attr.msgType);
+            var s = JSON.parse($attr.msgType);
             $($element[0]).closest(".xiaoxiti").after('<div class="slice"></div>');
             if ("imageUri" in s) {
                 $($element[0]).html("<img class='imgThumbnail' src='data:image/jpg;base64," + s.content + "' bigUrl='" + s.imageUri + "'/>");
             } else if ("duration" in s) {
                 $($element[0]).addClass("voice").html("  " + s.duration);
+            } else if ("poi" in s) {
+                $($element[0]).html("[位置消息]" + s.poi).append("<img src='data:image/png;base64," + s.content + "/>");
             } else {
                 $($element[0]).html(initEmotion(symbolreplace(s.content)));
             }
