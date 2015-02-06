@@ -9,7 +9,7 @@ Demostration of Rong Web SDK.
 
 ### 初始化web sdk ，此项必须设置
 
-使用融云 `web SDK` 发消息之前必须利用申请的`appkey`进行初始化，只有在初始化之后才能使用RongIMClient.getInstance()方法得到实例。
+使用融云 `web SDK` 发消息之前必须利用申请的`appkey`进行初始化，只有在初始化之后才能使用RongIMClient.getInstance()方法得到实例.如只想使用 web SDK 请参考 `SDK_Demo.html`
 ```js
 RongIMClient.init("appkey");
 ```
