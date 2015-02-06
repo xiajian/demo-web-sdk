@@ -7,11 +7,11 @@ Demostration of Rong Web SDK.
 RongIMClient.init("appkey");
 //设置链接状态坚挺器
 `
-RongIMClient.setConnectionStatusListener({
-     onChanged: function (status) {
-         window.console.log(status.getValue(), status.getMessage(), new Date())
-     }
-});
+RongIMClient.setConnectionStatusListener({<br />
+     onChanged: function (status) {<br />
+         window.console.log(status.getValue(), status.getMessage(), new Date())<br />
+     }<br />
+});<br />
 `
 //链接融云服务器
 
