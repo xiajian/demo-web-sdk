@@ -13,7 +13,7 @@ Demostration of Rong Web SDK.
 ```js
 RongIMClient.init("appkey");
 ```
-### 设置链接状态坚挺器，此项必须设置
+### 设置链接状态监听器，此项必须设置
 ```js
 RongIMClient.setConnectionStatusListener({  
      onChanged: function (status) {  
