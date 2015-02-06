@@ -3,7 +3,9 @@ demo-web-sdk
 
 Demostration of Rong Web SDK.
 
-## 如何使用
+## 融云 web SDK 如何使用
+
+[文档参考](http://docs.rongcloud.cn/api/js/index.html " SDK 文档")
 
 ### 初始化web sdk ，此项必须设置
 
