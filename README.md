@@ -68,4 +68,18 @@ element.onclick = function () {
        });
 };
 ```
+### 使用指定链接通道链接服务器
+连接通道默认使用websocket，如环境不支持websocket则自动降级至flash socket。如果想强制使用长链接连接服务器则必须设置`window.WEB_XHR_POLLING = true;`
+```js
+     //强制使用长链接进行通讯 设置此项，并保证此项优先级最高并且最先被执行，否则设置无效
+     window.WEB_XHR_POLLING = true;
+  ```
+  ```js
+     //强制使用flash进行通讯 设置此项，并保证此项优先级最高并且最先被执行，否则设置无效
+     window.WEB_SOCKET_FORCE_FLASH = true;
+```
+##通道选项优先级比较
+`window.WEB_XHR_POLLING > window.WEB_SOCKET_FORCE_FLASH`
+
+
 web sdk是全异步的，所以发送消息之前确保链接成功
