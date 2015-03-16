@@ -173,8 +173,8 @@ $(function() {
 						});
 					}
 				}
-				if (!_historyMessagesCache[data.getConversationType().getValue() + "_" + data.getTargetId()]) _historyMessagesCache[data.getConversationType().getValue() + "_" + data.getTargetId()] = [data];
-				else _historyMessagesCache[data.getConversationType().getValue() + "_" + data.getTargetId()].push(data);
+				if (!_historyMessagesCache[data.getConversationType() + "_" + data.getTargetId()]) _historyMessagesCache[data.getConversationType() + "_" + data.getTargetId()] = [data];
+				else _historyMessagesCache[data.getConversationType() + "_" + data.getTargetId()].push(data);
 			} else {
 				addhistoryMessages(data);
 			}
@@ -184,13 +184,13 @@ $(function() {
 
 	function addhistoryMessages(item) {
 		$scope.historyMessages.push(item);
-		$(".dialog_box:first").append(String.stringFormat(historyStr, item.getMessageDirection().getValue() == 0 ? "other_user" : "self", item.getMessageDirection().getValue() == 1 ? owner.portrait : "static/images/personPhoto.png", "", item.getMessageDirection().getValue() == 0 ? 'white_arrow.png' : 'blue_arrow.png', myUtil.msgType(item.getDetail()), item.getMessageId()));
+		$(".dialog_box:first").append(String.stringFormat(historyStr, item.getMessageDirection() == 0 ? "other_user" : "self", item.getMessageDirection() == 1 ? owner.portrait : "static/images/personPhoto.png", "", item.getMessageDirection() == 0 ? 'white_arrow.png' : 'blue_arrow.png', myUtil.msgType(item.getDetail()), item.getMessageId()));
 	}
 
 	function initConversationList() {
 		_html = "";
 		$scope.ConversationList.forEach(function(item) {
-			_html += String.stringFormat(conversationStr, item.getConversationType().getValue(), item.getTargetId(), item.getConversationTitle(), "static/images/personPhoto.png", item.getUnreadMessageCount() == 0 ? "hidden" : "", item.getUnreadMessageCount(), item.getConversationTitle(), new Date(+item.getLatestTime()).toString().split(" ")[4]);
+			_html += String.stringFormat(conversationStr, item.getConversationType(), item.getTargetId(), item.getConversationTitle(), "static/images/personPhoto.png", item.getUnreadMessageCount() == 0 ? "hidden" : "", item.getUnreadMessageCount(), item.getConversationTitle(), new Date(+item.getLatestTime()).toString().split(" ")[4]);
 		});
 		$("#conversationlist").html(_html);
 	};
@@ -217,7 +217,7 @@ $(function() {
 		$("#conversationTitle").html($scope.conversationTitle);
 		_html = "";
 		$scope.historyMessages.forEach(function(item, i) {
-			_html += String.stringFormat(historyStr, item.getMessageDirection().getValue() == 0 ? "other_user" : "self", item.getMessageDirection().getValue() == 1 ? owner.portrait : "static/images/personPhoto.png", "", item.getMessageDirection().getValue() == 0 ? 'white_arrow.png' : 'blue_arrow.png', myUtil.msgType(item.getDetail()), item.getMessageId());
+			_html += String.stringFormat(historyStr, item.getMessageDirection() == 0 ? "other_user" : "self", item.getMessageDirection() == 1 ? owner.portrait : "static/images/personPhoto.png", "", item.getMessageDirection() == 0 ? 'white_arrow.png' : 'blue_arrow.png', myUtil.msgType(item.getDetail()), item.getMessageId());
 		});
 		$(".dialog_box:first").html(_html);
 		$("#totalunreadcount").html($scope.totalunreadcount);
@@ -238,7 +238,7 @@ var myUtil = {
 		if ("imageUri" in type) {
 			return String.stringFormat('<div class="msgBody">{0}</div>', "<img class='imgThumbnail' src='data:image/jpg;base64," + type.content + "' bigUrl='" + type.imageUri + "'/>");
 		} else if ("duration" in type) {
-			return String.stringFormat('<div class="msgBody voice">{0}</div>', "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + type.duration);
+			return String.stringFormat('<div class="msgBody voice">{0}</div><input type="hidden" value="'+type.content+'">', "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + type.duration);
 		} else if ("poi" in type) {
 			return String.stringFormat('<div class="msgBody">{0}</div>{1}', "[位置消息]" + type.poi, "<img src='data:image/png;base64," + type.content + "'/>");
 		} else {

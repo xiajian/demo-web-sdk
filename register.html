@@ -9,6 +9,7 @@
     <meta name="description" content="融云 Web Demo 下载体验！"/>
     <link href="static/css/main.css" rel="stylesheet">
     <script src='static/js/jquery-1.8.2.min.js'></script>
+    <link rel="shortcut icon" href="favicon.ico">
     <script>
     $(function() {
         var input = $("input");
@@ -34,7 +35,7 @@
                             }
                         }).fail(function() {
                             that.val("").next().removeClass("hidden").end().focus();
-                        })
+                        });
                         return;
                     }
                     break;
