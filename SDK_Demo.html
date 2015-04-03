@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title></title>
     <script>
-//强制使用长链接
+//强制使用长链接，消息推送相关
 //      window.WEB_XHR_POLLING = true;
 //强制使用flash
 //      window.WEB_SOCKET_FORCE_FLASH = true;
@@ -33,7 +33,6 @@
 
 </div>
 <div id="cons">
-
 </div>
 <script>
     window.onload = function () {
@@ -41,25 +40,21 @@
         window.log = function (x) {
             cons.innerHTML += x + "<br/>";
         };
-        RongIMClient.init("APPKEY");
-
+        // 初始化, 客户端聊天
+        RongIMClient.init("bmdehs6pdcm6s");
+        
+        // 设置连接状态监听器，向终端中写入消息
         RongIMClient.setConnectionStatusListener({
-            onChanged: function (status) {
+            onChanged: function (status) {  // status： 是RongIMClient.ConnectionStatusListener.ConnectionStatus对象
                 window.console.log(status.getValue(), status.getMessage(), new Date())
             }
         });
-        var mydiv = document.getElementById("mydiv");
-        RongIMClient.getInstance().setOnReceiveMessageListener({
-            onReceived: function (data) {
-                var p = document.createElement("span");
-                p.style.marginRight = "10px";
-                p.innerHTML = data.getContent();
-                mydiv.appendChild(p);
-            }
-        });
         
+        //搞了个测试帐号: xiajian - 江寒秋影 - 以及响应的token
         var self = "";
-        RongIMClient.connect("TOKEN", {
+        var token = "LFPc+Gi2GHjuCxKQnP2ruJsQBDlphTudYZe4u9ePSklDax1jyQzeV2hjCzDPs6MTa0xmRPDNnnNru3KJ3qDaRaBxIwSJYcd1"; 
+        // 建立到融云server的连接
+        RongIMClient.connect(token, {
             onSuccess: function (x) {
                 alert("connected，userid＝" + x)
                 self = x;
@@ -69,11 +64,26 @@
             }
         });
 
-        ins = RongIMClient.getInstance();
+        ins = RongIMClient.getInstance();  // RongIMClient是个工厂方法，这里使用的是单例模式
+        // 设置向某个div内插值
+        var mydiv = document.getElementById("mydiv");
+        // 消息监听器
+        ins.setOnReceiveMessageListener({
+            onReceived: function (data) {
+                var p = document.createElement("span");
+                p.style.marginRight = "10px";
+                p.innerHTML = data.getContent();
+                mydiv.appendChild(p);
+            }
+        });
 
-        var c = document.getElementById("content"), to = document.getElementById("target"), s = document.getElementById("send"), t = document.getElementById("type");
+        var c = document.getElementById("content"),  // 内容
+            to = document.getElementById("target"),  // 通信目标
+            s = document.getElementById("send"),     // send按钮
+            t = document.getElementById("type");     // 发送方式
         s.onclick = function () {
             var con = RongIMClient.ConversationType.setValue(t.value);
+            // sendMessage - 发送消息方法
             ins.sendMessage(con, to.value, RongIMClient.TextMessage.obtain(c.value || Date.now()), null, {
                 onSuccess: function () {
                     confirm("send successfully");
@@ -84,6 +94,5 @@
             });
         }
     };
-
 </script>
 </html>
