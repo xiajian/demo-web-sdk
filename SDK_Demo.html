@@ -9,7 +9,7 @@
 //强制使用flash
 //      window.WEB_SOCKET_FORCE_FLASH = true;
     </script>
-    <script src="http://res.websdk.rong.io/RongIMClient-0.9.6.min.js"></script>
+    <script src="http://res.websdk.rong.io/RongIMClient-0.9.9.min.js"></script>
 </head>
 <body>
 
@@ -41,18 +41,19 @@
             cons.innerHTML += x + "<br/>";
         };
         // 初始化, 客户端聊天
-        RongIMClient.init("bmdehs6pdcm6s");
+        RongIMClient.init("APPKEY");
         
         // 设置连接状态监听器，向终端中写入消息
         RongIMClient.setConnectionStatusListener({
-            onChanged: function (status) {  // status： 是RongIMClient.ConnectionStatusListener.ConnectionStatus对象
-                window.console.log(status.getValue(), status.getMessage(), new Date())
+            onChanged: function (status) { 
+                // status： 是RongIMClient.ConnectionStatusListener.ConnectionStatus对象
+                window.console.log(status)
             }
         });
         
         //搞了个测试帐号: xiajian - 江寒秋影 - 以及响应的token
         var self = "";
-        var token = "LFPc+Gi2GHjuCxKQnP2ruJsQBDlphTudYZe4u9ePSklDax1jyQzeV2hjCzDPs6MTa0xmRPDNnnNru3KJ3qDaRaBxIwSJYcd1"; 
+        var token = "TOKEN"; 
         // 建立到融云server的连接
         RongIMClient.connect(token, {
             onSuccess: function (x) {
